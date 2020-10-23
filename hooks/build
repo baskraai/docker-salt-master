@@ -12,4 +12,4 @@ fi
 
 echo "=> Using the following Tag information for SaltStack: $DOCKER_TAG"
 
-docker build --build-arg DOCKER_TAG=$DOCKER_TAG -f $DOCKERFILE_PATH -t $IMAGE_NAME .
+docker build --build-arg DOCKER_TAG="$DOCKER_TAG" -f $DOCKERFILE_PATH -t $IMAGE_NAME .
