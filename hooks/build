@@ -1,3 +1,15 @@
 #!/bin/bash
-echo "=> Building the $DOCKERFILE_PATH with Tag $DOCKER_TAG to image $IMAGE_NAME"
+
+echo "=> Building the \"$DOCKERFILE_PATH\" with Tag \"$DOCKER_TAG\" to image \"$IMAGE_NAME\""
+
+if [ "$DOCKER_TAG" == "testing" ]; then
+	DOCKER_TAG="testing"
+elif [ "$DOCKER_TAG" == "stable" ]; then
+	DOCKER_TAG="stable"
+else
+	DOCKER_TAG="stable $DOCKER_TAG"
+fi
+
+echo "=> Using the following Tag information for SaltStack: $DOCKER_TAG"
+
 docker build --build-arg DOCKER_TAG=$DOCKER_TAG -f $DOCKERFILE_PATH -t $IMAGE_NAME .
