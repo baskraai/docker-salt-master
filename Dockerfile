@@ -6,6 +6,8 @@ RUN apt-get update \
     && apt-get install -y curl jq vim wget nano python3-pip \
     && rm -rf /var/lib/apt/lists/*
 
+ARG DOCKER_TAG
+
 RUN curl -sSL https://bootstrap.saltstack.com | bash -s -- -M -X -x python3 $DOCKER_TAG \
     && rm -rf /var/lib/apt/lists/*
 
