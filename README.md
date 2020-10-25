@@ -9,6 +9,7 @@ This containers exposes the following ports:
 
 | Port | usage |
 | :---: | --- |
+| 22 | OpenSSH server |
 | 4505 | SaltStack Publisher |
 | 4506 | SaltStack Request Server |
 
@@ -25,13 +26,19 @@ The SaltStack recommended directory `/srv/salt` is used.
 But you can mount your config anywhere.
 
 ## SSH
-The containers has an support for SSH keys on Git
-You can pass the ssh public via `SSH_PUBKEY` and private key via `SSH_PRIVKEY` for pushing config from the container to a git server.
+The containers has an OpenSSH server included.
+You can disable this server by setting the parameter `DISABLE_SSH' to 'yes'.
+You can pass the ssh public via `SSH_PUBKEY` and private key via `SSH_PRIVKEY` for the main server SSH keys.
 At this time the key needs to be a ECDSA server, this will be sorted later.
+If you like to login with a password, you can set the `SSH_PASSWORD` variable.
+If this variable is not set, password authentication for root is disabled.
+You can pass ssh_keys that are allowed to login as root via the `SSH_AUTHKEY` variable seperated by `;`.
 
 # Git
 This image contains git so you can pull or push config from GitHub.
 You can set the git name via `GIT_NAME` and git email via `GIT_MAIL`.
+You can pass the ssh public via `SSH_PUBKEY` and private key via `SSH_PRIVKEY` for pushing config from the container to a git server.
+At this time the key needs to be a ECDSA server, this will be sorted later.
 
 # Salt minion
 This container also has a salt-minion.
@@ -58,13 +65,15 @@ You can use the following parameters with this container:
 
 You can use the following environment variables with this container:
 
-| Variable | meaning | values |
-| :---: | --- | --- |
-| SSH\_PUBKEY | Specify the publickey for ssh here | <string>
-| SSH\_PRIVKEY | Speficy the privatekey for ssh here | <string>
-| GIT\_NAME | Specify the name used for git commits | <string>
-| GIT\_EMAIL | Specify the email used for git commits | <string>
-| DISABLE\_MINION | Disable the minion in the container | 'yes' or 'no'
+| Variable | Required | meaning | values |
+| :---: | --- | --- | --- |
+| SSH\_PUBKEY | Optional | Specify the publickey for ssh here | <string>
+| SSH\_PRIVKEY | Optional | Specify the privatekey for ssh here | <string>
+| SSH\_PASSWORD | Optional | Specify the password for the root user | <string>
+| GIT\_NAME | Optional | Specify the name used for git commits | <string>
+| GIT\_EMAIL | Optional | Specify the email used for git commits | <string>
+| DISABLE\_MINION | Optional | Disable the minion in the container | 'yes' or 'no'
+| DISABLE\_SSH | Optional | Disable the OpenSSH server in the container | 'yes' or 'no'
 
 ## Extend image
 ```

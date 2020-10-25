@@ -14,7 +14,9 @@ if [ ! -d "~/.ssh" ]; then
 	ssh-keygen -b 521 -t ecdsa -q -f /root/.ssh/id_ecdsa -N ""
 elif [ "$SSH_PUBKEY" != "" ] && [ "$SSH_PRIVKEY" != "" ]; then
 	echo "$SSH_PUBKEY" > ~/.ssh/id_ecdsa.pub
+	echo "$SSH_PUBKEY" > /etc/ssh/ssh_host_ecdsa_key.pub
 	echo "$SSH_PRIVKEY" > ~/.ssh/id_ecdsa
+	echo "$SSH_PRIVKEY" > /etc/ssh/ssh_host_ecdsa_key
 elif [ "$SSH_PUBKEY" != "" ] || [ "$SSH_PRIVKEY" != "" ]; then
 	echo "# Error, only SSH_PUBKEY pr SSH_PRIVKEY given. Need both."
 else
@@ -41,18 +43,34 @@ echo "##########################################"
 if [ "$SSH_PASSWORD" != "" ]; then
 	echo "# Set the password for the root user and allow password login."
 	echo "root:$SSH_PASSWORD" | chpasswd
-	exec sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
+	sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
 fi
+
+if [ "$SSH_AUTHKEY" != "" ]; then
+	echo "# Set authorized keys for the root user."
+	mkdir -p /root/.ssh
+	echo "$SSH_AUTHKEY" | tr ";" "\n" > /root/.ssh/authorized_keys
+	sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
+fi
+
 
 if [ "$1" = 'test' ]; then
 	exec "bash"
-elif [ "$DISABLE_MINION" == "yes" ]; then
-	echo "# Disabled minion, only enable master"
-	exec /usr/bin/salt-master --user root "$@"
-else
-	echo "# Running default setup for the container"
-	exec /usr/bin/salt-minion --user root &
-	echo "# Minion started"
-	exec /usr/bin/salt-master --user root "$@"
+	exit 0
 fi
+
+if [ "$DISABLE_MINION" != "yes" ]; then
+	echo "# Salt minion is not disabled, starting the minion"
+	exec /usr/bin/salt-minion --user root &
+	echo "# Salt minion started."
+fi
+
+if [ "$DISABLE_SSH" != "yes" ]; then
+	echo "# OpenSSH server is not disabled, starting the deamon"
+	exec /usr/sbin/sshd -e &
+	echo "# OpenSSH server started."
+fi
+
+echo "# Starting the Salt-master" 
+exec /usr/bin/salt-master --user root "$@"
 

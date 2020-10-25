@@ -6,7 +6,8 @@ RUN apt-get update \
     && apt-get install -y curl jq vim wget nano python3-pip git openssh-server \
     && rm -rf /var/lib/apt/lists/*
 
-RUN mkdir /var/run/sshd
+RUN mkdir /var/run/sshd \
+    && sed -i 's/#HostKey \/etc\/ssh\/ssh_host_ecdsa_key/HostKey \/etc\/ssh\/ssh_host_ecdsa_key/' /etc/ssh/sshd_config
 
 ARG DOCKER_TAG
 
