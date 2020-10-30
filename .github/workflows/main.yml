@@ -22,4 +22,4 @@ jobs:
       
       # Runs a single command using the runners shell
       - name: Build all the required version of the container, use the SaltStack releases.
-        run: bash .scripts/build-publish.sh
+        run: bash .scripts/build-publish.sh "$GITHUB_REPOSITORY"
