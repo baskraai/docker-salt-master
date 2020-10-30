@@ -22,7 +22,7 @@ for release in $(echo "$releases" | sort)
 do
     release_name=$(echo "$release" | tr -d '"')
 
-    output=$(docker build -t "$REPO":"$release_name")
+    output=$(docker build -t "$REPO":"$release_name" .)
     if $?; then
         echo_failed "Build $REPO:$release_name had an error"
         echo "$output"
