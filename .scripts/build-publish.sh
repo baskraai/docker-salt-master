@@ -18,20 +18,26 @@ releases=$(echo "$releases" | grep -v 2017)
 # Remove all the 2018 releases
 releases=$(echo "$releases" | grep -v 2018)
 
+# Remove all the 2019 releases
+releases=$(echo "$releases" | grep -v 2019)
+
+
 for release in $(echo "$releases" | sort)
 do
     release_name=$(echo "$release" | tr -d '"')
     release_name_without_v=$(echo "$release_name" | tr -d 'v')
     echo_info "Build $REPO:$release_name_without_v is started"
-    if docker build -t "$REPO":"$release_name_without_v" --build-arg DOCKER_TAG="${release_name_without_v}" .; then
+    if ! docker build -t "$REPO":"$release_name_without_v" --build-arg DOCKER_TAG="${release_name_without_v}" .; then
         echo_failed "Build $REPO:$release_name_without_v had an error"
+        exit 1
     else
         echo_ok "Build $REPO:$release_name_without_v succesful"
     fi
 
     echo_info "Push $REPO:$release_name_without_v is started"
-    if docker push "$REPO":"$release_name_without_v"; then
+    if ! docker push "$REPO":"$release_name_without_v"; then
         echo_failed "push $REPO:$release_name_without_v had an error"
+        exit 1
     else
         echo_ok "push $REPO:$release_name_without_v succesful"
     fi
