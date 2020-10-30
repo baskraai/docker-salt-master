@@ -1,6 +1,5 @@
 FROM ubuntu:bionic
-MAINTAINER Bas Kraai <bas@kraai.email>
-
+LABEL MAINTAINER "Bas Kraai <bas@kraai.email>"
 
 RUN apt-get update \
     && apt-get install -y curl jq vim wget nano python3-pip git openssh-server \
