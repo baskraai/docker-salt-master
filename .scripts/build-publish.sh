@@ -21,16 +21,18 @@ releases=$(echo "$releases" | grep -v 2018)
 for release in $(echo "$releases" | sort)
 do
     release_name=$(echo "$release" | tr -d '"')
-
-    if docker build -t "$REPO":"$release_name" --build-arg DOCKER_TAG="${release_name}" .; then
-        echo_failed "Build $REPO:$release_name had an error"
+    release_name_without_v=$(echo "$release_name" | tr -d 'v')
+    echo_info "Build $REPO:$release_name_without_v is started"
+    if docker build -t "$REPO":"$release_name_without_v" --build-arg DOCKER_TAG="${release_name_without_v}" .; then
+        echo_failed "Build $REPO:$release_name_without_v had an error"
     else
-        echo_ok "Build $REPO:$release_name succesful"
+        echo_ok "Build $REPO:$release_name_without_v succesful"
     fi
 
-    if docker push "$REPO":"$release_name"; then
-        echo_failed "push $REPO:$release_name had an error"
+    echo_info "Push $REPO:$release_name_without_v is started"
+    if docker push "$REPO":"$release_name_without_v"; then
+        echo_failed "push $REPO:$release_name_without_v had an error"
     else
-        echo_ok "push $REPO:$release_name succesful"
+        echo_ok "push $REPO:$release_name_without_v succesful"
     fi
 done
