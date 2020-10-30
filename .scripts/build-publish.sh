@@ -4,8 +4,7 @@
 source ./.scripts/testfunctions.sh
 
 # Parameters
-REPO=${$1//"docker-"/""}
-GITHUB_REF="refs/heads/main"
+REPO=${1//docker-/}
 
 # Get all the releases
 releases=$(curl -s -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/saltstack/salt/releases | jq '.[].tag_name')
@@ -43,36 +42,36 @@ do
     release_name_without_v=$(echo "$release_name" | tr -d 'v')
     
     echo_info "Build $REPO:$release_name_without_v is started"
-    if ! docker build -t "$REPO":"$release_name_without_v" --build-arg DOCKER_TAG="${release_name_without_v}" .; then
-        echo_failed "Build $REPO:$release_name_without_v had an error"
-        exit 1
-    else
-        echo_ok "Build $REPO:$release_name_without_v succesful"
-    fi
+    # if ! docker build -t "$REPO":"$release_name_without_v" --build-arg DOCKER_TAG="${release_name_without_v}" .; then
+    #     echo_failed "Build $REPO:$release_name_without_v had an error"
+    #     exit 1
+    # else
+    #     echo_ok "Build $REPO:$release_name_without_v succesful"
+    # fi
 
     echo_info "Push $REPO:$release_name_without_v is started"
-    if ! docker push "$REPO":"$release_name_without_v"; then
-        echo_failed "push $REPO:$release_name_without_v had an error"
-        exit 1
-    else
-        echo_ok "push $REPO:$release_name_without_v succesful"
-    fi
+    # if ! docker push "$REPO":"$release_name_without_v"; then
+    #     echo_failed "push $REPO:$release_name_without_v had an error"
+    #     exit 1
+    # else
+    #     echo_ok "push $REPO:$release_name_without_v succesful"
+    # fi
 done
 
 branch=$(echo "$GITHUB_REF" | tr "/" " ")
 
 if [[ "$branch" =~ "main" ]]; then
     echo_info "Build stable release"
-    if ! docker build -t "$REPO":stable .; then
-        echo_failed "Build $REPO:stable had an error"
-        exit 1
-    else
-        echo_ok "Build $REPO:stable succesful"
-    fi
-    if ! docker push "$REPO":stable; then
-        echo_failed "push $REPO:stable had an error"
-        exit 1
-    else
-        echo_ok "push $REPO:stable succesful"
-    fi
+    # if ! docker build -t "$REPO":stable .; then
+    #     echo_failed "Build $REPO:stable had an error"
+    #     exit 1
+    # else
+    #     echo_ok "Build $REPO:stable succesful"
+    # fi
+    # if ! docker push "$REPO":stable; then
+    #     echo_failed "push $REPO:stable had an error"
+    #     exit 1
+    # else
+    #     echo_ok "push $REPO:stable succesful"
+    # fi
 fi
