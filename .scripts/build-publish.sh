@@ -10,22 +10,37 @@ REPO=$(echo "$1" | sed -e 's/docker-//')
 releases=$(curl -s -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/saltstack/salt/releases | jq '.[].tag_name')
 
 # Remove all the 2016 releases
-releases=$(echo "$releases" | grep -v 2016)
+releases="$(echo "$releases" | grep -v 2016)"
 
 # Remove all the 2017 releases
-releases=$(echo "$releases" | grep -v 2017)
+releases="$(echo "$releases" | grep -v 2017)"
 
 # Remove all the 2018 releases
-releases=$(echo "$releases" | grep -v 2018)
+releases="$(echo "$releases" | grep -v 2018)"
 
 # Remove all the 2019 releases
-releases=$(echo "$releases" | grep -v 2019)
+releases="$(echo "$releases" | grep -v 2019)"
 
+releases_array=""
 
-for release in $(echo "$releases" | sort)
+# Blacklist releases
+## 3000.1 = Saltstack script does not parse this release -> repo does not have GPG key for it.
+for release in $releases 
 do
     release_name=$(echo "$release" | tr -d '"')
     release_name_without_v=$(echo "$release_name" | tr -d 'v')
+    if [ "$release_name_without_v" == "3000.1" ]; then
+        continue
+    else
+        releases_array="$releases_array $release_name_without_v"
+    fi
+done
+
+for release in $(echo $releases_array | sort -r)
+do
+    release_name=$(echo "$release" | tr -d '"')
+    release_name_without_v=$(echo "$release_name" | tr -d 'v')
+    
     echo_info "Build $REPO:$release_name_without_v is started"
     if ! docker build -t "$REPO":"$release_name_without_v" --build-arg DOCKER_TAG="${release_name_without_v}" .; then
         echo_failed "Build $REPO:$release_name_without_v had an error"
