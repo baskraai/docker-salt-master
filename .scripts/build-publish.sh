@@ -22,18 +22,14 @@ for release in $(echo "$releases" | sort)
 do
     release_name=$(echo "$release" | tr -d '"')
 
-    output=$(docker build -t "$REPO":"$release_name" .)
-    if $?; then
+    if docker build -t "$REPO":"$release_name" --build-arg DOCKER_TAG="${release_name}" .; then
         echo_failed "Build $REPO:$release_name had an error"
-        echo "$output"
     else
         echo_ok "Build $REPO:$release_name succesful"
     fi
 
-    output=$(docker push "$REPO":"$release_name")
-    if $?; then
+    if docker push "$REPO":"$release_name"; then
         echo_failed "push $REPO:$release_name had an error"
-        echo "$output"
     else
         echo_ok "push $REPO:$release_name succesful"
     fi
