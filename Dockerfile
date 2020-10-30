@@ -10,7 +10,7 @@ RUN mkdir /var/run/sshd \
 
 ARG DOCKER_TAG
 
-RUN curl -sSL https://bootstrap.saltstack.com | bash -s -- -M -X -x python3 $DOCKER_TAG \
+RUN curl -sSL https://bootstrap.saltstack.com | bash -s -- -M -X -x python3 stable $DOCKER_TAG \
     && rm -rf /var/lib/apt/lists/*
 
 RUN mv /etc/salt /etc/salt-default
