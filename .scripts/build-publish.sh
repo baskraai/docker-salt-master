@@ -4,7 +4,7 @@
 source ./.scripts/testfunctions.sh
 
 # Parameters
-REPO=$(echo"$1" | sed -e 's/docker-//')
+REPO=$(echo "$1" | sed -e 's/docker-//')
 
 # Get all the releases
 releases=$(curl -s -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/saltstack/salt/releases | jq '.[].tag_name')
