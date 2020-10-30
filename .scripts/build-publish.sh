@@ -4,7 +4,8 @@
 source ./.scripts/testfunctions.sh
 
 # Parameters
-REPO=$(echo "$1" | sed -e 's/docker-//')
+REPO=${$1//"docker-"/""}
+GITHUB_REF="refs/heads/main"
 
 # Get all the releases
 releases=$(curl -s -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/saltstack/salt/releases | jq '.[].tag_name')
@@ -36,7 +37,7 @@ do
     fi
 done
 
-for release in $(echo $releases_array | sort -r)
+for release in $(echo "$releases_array" | sort -r)
 do
     release_name=$(echo "$release" | tr -d '"')
     release_name_without_v=$(echo "$release_name" | tr -d 'v')
@@ -57,3 +58,21 @@ do
         echo_ok "push $REPO:$release_name_without_v succesful"
     fi
 done
+
+branch=$(echo "$GITHUB_REF" | tr "/" " ")
+
+if [[ "$branch" =~ "main" ]]; then
+    echo_info "Build stable release"
+    if ! docker build -t "$REPO":stable .; then
+        echo_failed "Build $REPO:stable had an error"
+        exit 1
+    else
+        echo_ok "Build $REPO:stable succesful"
+    fi
+    if ! docker push "$REPO":stable; then
+        echo_failed "push $REPO:stable had an error"
+        exit 1
+    else
+        echo_ok "push $REPO:stable succesful"
+    fi
+fi
