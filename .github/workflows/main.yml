@@ -5,7 +5,7 @@ on:
     branches:
       - main
   schedule:
-    - cron:  '* * * * 2'
+    - cron:  '0 0 * * 2'
 
 jobs:
   build:
@@ -26,7 +26,7 @@ jobs:
       - uses: satackey/action-docker-layer-caching@v0.0.8
         # Ignore the failure of a step and avoid terminating the job.
         continue-on-error: true
-        
+
       # Runs a single command using the runners shell
       - name: Build all the required version of the container, use the SaltStack releases.
         run: bash .scripts/build-publish.sh "$GITHUB_REPOSITORY"

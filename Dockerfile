@@ -19,6 +19,7 @@ VOLUME /etc/salt /var/log/salt
 
 EXPOSE 4505 4506 22
 
+COPY ./.scripts/helpfunctions.sh /
 COPY ./docker-entrypoint.sh /
 RUN chmod +x /docker-entrypoint.sh
 ENTRYPOINT ["/docker-entrypoint.sh"]
