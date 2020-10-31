@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Include functions
-source ./.scripts/testfunctions.sh
+source ./.scripts/helpfunctions.sh
 
 # Parameters
 REPO=${1//docker-/}
