@@ -85,6 +85,10 @@ RUN apt-get update \
 
 With this Dockerfile the rest of the container keeps working as expected.
 
+### Mitigations
+There are a few mitigations applied to to images.
+  - [CVE Nov 3 2020](https://www.saltstack.com/blog/on-november-3-2020-saltstack-publicly-disclosed-three-new-cves/) -> images recreated, downloaded up-to-date packages.
+
 ### Todo
 - Enable auto-build with release check.
 - Allow password ssh to be passed hashed, and detect that.
